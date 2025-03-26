@@ -1,0 +1,50 @@
+org: wizzards
+app: task-manager-api
+service: task-manager-api
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  profile: aws-profile
+  environment:
+    MONGO_URI: ${env:MONGO_URI}
+    DB_NAME: taskmanager
+
+functions:
+  getTasks:
+    handler: tasks.get_tasks.handler
+    events:
+      - http:
+          path: tasks
+          method: get
+          cors: true  # Enable CORS for this endpoint
+
+  createTask:
+    handler: tasks.create_task.handler
+    events:
+      - http:
+          path: tasks
+          method: post
+          cors: true  # Enable CORS for this endpoint
+
+  updateTask:
+    handler: tasks.update_task.handler
+    events:
+      - http:
+          path: tasks/{id}
+          method: put
+          cors: true  # Enable CORS for this endpoint
+
+  deleteTask:
+    handler: tasks.delete_task.handler
+    events:
+      - http:
+          path: tasks/{id}
+          method: delete
+          cors: true  # Enable CORS for this endpoint
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-python-requirements
+  - serverless-offline
